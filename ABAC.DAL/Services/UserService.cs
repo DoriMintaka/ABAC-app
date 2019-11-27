@@ -116,7 +116,7 @@ namespace ABAC.DAL.Services
 
             foreach (var attribute in attributes)
             {
-                user.Attributes[attribute.Name] = attribute.Value;
+				user.Attributes.Add(attribute);
             }
 
             await repository.CreateOrUpdateAsync(user);
@@ -130,7 +130,14 @@ namespace ABAC.DAL.Services
                 throw new NotFoundException();
             }
 
-            user.Attributes.Remove(attributeName);
+			var attribute = user.Attributes.SingleOrDefault(a => a.Name == attributeName)
+
+			if (attribute == null)
+			{
+				throw new NotFoundException();
+			}
+
+			user.Attributes.Remove(attribute);
             await repository.CreateOrUpdateAsync(user);
         }
     }

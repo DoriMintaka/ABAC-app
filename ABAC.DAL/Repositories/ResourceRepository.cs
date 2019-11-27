@@ -1,31 +1,64 @@
 ﻿using ABAC.DAL.Entities;
 using ABAC.DAL.Repositories.Contracts;
+using ABAC.DAL.Context;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace ABAC.DAL.Repositories
 {
     public class ResourceRepository : IEntityRepository<Resource>
     {
-        public Task<IEnumerable<Resource>> GetAsync()
+		private readonly AppDbContext _context;
+
+		public ResourceRepository(AppDbContext context)
+		{
+			this._context = context;
+		}
+
+		public async Task<IEnumerable<Resource>> GetAsync()
         {
-            throw new NotImplementedException();
+			return await _context.Resources.ToListAsync();
         }
 
-        public Task<Resource> GetByIdAsync(int id)
+        public async Task<Resource> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
-        }
+			return await _context.Resources.SingleOrDefaultAsync(i => i.Id == id);
+		}
 
-        public Task CreateOrUpdateAsync(Resource entity)
+        public async Task CreateOrUpdateAsync(Resource entity)
         {
-            throw new NotImplementedException();
-        }
+			var item = await _context.Resources.FindAsync(entity.Id);
 
-        public Task DeleteByIdAsync(int id)
+			if (item == null)
+			{
+				_context.Resources.Add(entity);
+			}
+			else
+			{
+				item.Name = entity.Name;
+				item.Value = entity.Value;
+				item.Attributes = entity.Attributes;
+
+				_context.Resources.Update(item);
+			}
+
+			await _context.SaveChangesAsync();
+		}
+
+		public async Task DeleteByIdAsync(int id)
         {
-            throw new NotImplementedException();
-        }
+			var item = await _context.Resources.FindAsync(id);
+
+			if (item == null)
+			{
+				throw new ArgumentException();
+			}
+
+			_context.Resources.Remove(item);
+			await _context.SaveChangesAsync();
+		}
     }
 }

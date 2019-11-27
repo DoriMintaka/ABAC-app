@@ -1,36 +1,70 @@
 ﻿using ABAC.DAL.Entities;
 using ABAC.DAL.Repositories.Contracts;
+using ABAC.DAL.Context;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace ABAC.DAL.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        public Task<IEnumerable<User>> GetAsync()
-        {
-            throw new NotImplementedException();
-        }
+		private readonly AppDbContext _context;
 
-        public Task<User> GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
+		public UserRepository(AppDbContext context)
+		{
+			this._context = context;
+		}
 
-        public Task<User> GetByLoginAsync(string login)
+		public async Task<IEnumerable<User>> GetAsync()
         {
-            throw new NotImplementedException();
-        }
+			return await _context.Users.ToListAsync();
+		}
 
-        public Task CreateOrUpdateAsync(User entity)
+        public async Task<User> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
-        }
+			return await _context.Users.SingleOrDefaultAsync(i => i.Id == id);
+		}
 
-        public Task DeleteByIdAsync(int id)
+		public async Task<User> GetByLoginAsync(string login)
         {
-            throw new NotImplementedException();
-        }
+			return await _context.Users.SingleOrDefaultAsync(i => i.Login == login);
+		}
+
+		public async Task CreateOrUpdateAsync(User entity)
+        {
+			var item = await _context.Users.FindAsync(entity.Id);
+
+			if (item == null)
+			{
+				_context.Users.Add(entity);
+			}
+			else
+			{
+				item.Name = entity.Name;
+				item.Login = entity.Login;
+				item.Password = entity.Password;
+				item.Attributes = entity.Attributes;
+
+				_context.Users.Update(item);
+			}
+
+			await _context.SaveChangesAsync();
+		}
+
+        public async Task DeleteByIdAsync(int id)
+        {
+			var item = await _context.Users.FindAsync(id);
+
+			if (item == null)
+			{
+				throw new ArgumentException();
+			}
+
+			_context.Users.Remove(item);
+			await _context.SaveChangesAsync();
+		}
     }
 }

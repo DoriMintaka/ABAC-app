@@ -79,8 +79,8 @@ namespace ABAC.DAL.Services
 
             foreach (var attribute in attributes)
             {
-                resource.Attributes[attribute.Name] = attribute.Value;
-            }
+                resource.Attributes.Add(attribute);
+			}
 
             await repository.CreateOrUpdateAsync(resource);
         }
@@ -93,8 +93,16 @@ namespace ABAC.DAL.Services
                 throw new NotFoundException();
             }
 
-            resource.Attributes.Remove(attributeName);
-            await repository.CreateOrUpdateAsync(resource);
+			var attribute = resource.Attributes.SingleOrDefault(a => a.Name == attributeName);
+
+			if (attribute == null)
+			{
+				throw new NotFoundException();
+			}
+
+			resource.Attributes.Remove(attribute);
+
+			await repository.CreateOrUpdateAsync(resource);
         }
     }
 }
