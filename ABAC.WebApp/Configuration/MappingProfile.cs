@@ -13,7 +13,7 @@ namespace ABAC.WebApp.Configuration
             CreateMap<User, UserInfo>();
             CreateMap<Resource, ResourceInfo>();
             CreateMap<KeyValuePair<string, string>, Attribute>()
-                .ConvertUsing(kvp => new Attribute {Name = kvp.Key, Value = kvp.Value});
+                .ConvertUsing(kvp => new Attribute { Name = kvp.Key, Value = kvp.Value });
 
             CreateMap<Attribute, KeyValuePair<string, string>>()
                 .ConvertUsing(attr => new KeyValuePair<string, string>(attr.Name, attr.Value));

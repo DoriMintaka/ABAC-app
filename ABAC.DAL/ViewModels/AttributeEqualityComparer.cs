@@ -4,7 +4,7 @@ using Attribute = ABAC.DAL.Entities.Attribute;
 
 namespace ABAC.DAL.ViewModels
 {
-    class AttributeEqualityComparer : IEqualityComparer<Attribute> 
+    class AttributeEqualityComparer : IEqualityComparer<Attribute>
     {
         public bool Equals(Attribute x, Attribute y)
         {

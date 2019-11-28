@@ -9,13 +9,13 @@ namespace ABAC.WebApp.Controllers
 {
     [Route("api/management")]
     [ApiController]
-    public class PermissionsController : ControllerBase
+    public class PermissionController : ControllerBase
     {
         private readonly IUserService userService;
 
         private readonly IService<ResourceInfo> resourceService;
 
-        public PermissionsController(IUserService userService, IService<ResourceInfo> resourceService)
+        public PermissionController(IUserService userService, IService<ResourceInfo> resourceService)
         {
             this.userService = userService;
             this.resourceService = resourceService;

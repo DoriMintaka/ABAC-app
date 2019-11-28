@@ -47,9 +47,9 @@ namespace ABAC.DAL.Extensions
         }
 
         private static ICollection<Attribute> DefaultUserAttributes
-            => new List<Attribute> { new Attribute{ Name = "User.Role", Value = "User"}};
+            => new List<Attribute> { new Attribute { Name = "User.Role", Value = "User" } };
 
         private static ICollection<Attribute> DefaultResourceAttributes
-            => new List<Attribute> { new Attribute { Name = "Resource.CreatedAt", Value = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)}};
+            => new List<Attribute> { new Attribute { Name = "Resource.CreatedAt", Value = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture) } };
     }
 }

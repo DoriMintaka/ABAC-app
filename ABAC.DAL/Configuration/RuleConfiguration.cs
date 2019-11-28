@@ -4,14 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ABAC.DAL.Configuration
 {
-    public class ResourceConfiguration : IEntityTypeConfiguration<Resource>
+    public class RuleConfiguration : IEntityTypeConfiguration<Rule>
     {
-        public void Configure(EntityTypeBuilder<Resource> builder)
+        public void Configure(EntityTypeBuilder<Rule> builder)
         {
             builder.ToTable("resource").HasKey(item => item.Id);
-            builder.Property(user => user.Name).HasColumnName("name");
             builder.Property(user => user.Value).HasColumnName("value");
-            builder.HasMany(user => user.Attributes);
         }
     }
 }

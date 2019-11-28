@@ -6,7 +6,7 @@ namespace ABAC.DAL.Exceptions
     {
         public AlreadyExistsException() : base("Requested entity already exists.")
         {
-            
+
         }
     }
 }
