@@ -130,7 +130,7 @@ namespace ABAC.DAL.Services
                 throw new NotFoundException();
             }
 
-			var attribute = user.Attributes.SingleOrDefault(a => a.Name == attributeName)
+            var attribute = user.Attributes.SingleOrDefault(a => a.Name == attributeName);
 
 			if (attribute == null)
 			{
