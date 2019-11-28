@@ -46,8 +46,10 @@ namespace ABAC.WebApp
             services.AddAutoMapper(Assembly.GetAssembly(typeof(MappingProfile)));
             services.AddTransient<IEntityRepository<Resource>, ResourceRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IEntityRepository<Rule>, RuleRepository>();
             services.AddTransient<IService<ResourceInfo>, ResourceService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IRuleService, RuleService>();
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {

@@ -2,6 +2,8 @@
 using ABAC.DAL.Repositories.Contracts;
 using ABAC.DAL.RuleParser;
 using ABAC.DAL.Services.Contracts;
+using ABAC.DAL.ViewModels;
+using AutoMapper;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -16,11 +18,33 @@ namespace ABAC.DAL.Services
     {
         private IEnumerable<Func<User, Resource, bool>> rules;
         private readonly IEntityRepository<Rule> ruleRepository;
+        private readonly IMapper mapper;
 
-        public RuleService(IEntityRepository<Rule> ruleRepository)
+        public RuleService(IEntityRepository<Rule> ruleRepository, IMapper mapper)
         {
             LoadRulesAsync().GetAwaiter().GetResult();
             this.ruleRepository = ruleRepository;
+            this.mapper = mapper;
+        }
+
+        public async Task<IEnumerable<RuleInfo>> GetAsync()
+        {
+            return mapper.Map<IEnumerable<RuleInfo>>(await ruleRepository.GetAsync());
+        }
+
+        public async Task<RuleInfo> GetAsync(int id)
+        {
+            return mapper.Map<RuleInfo>(await ruleRepository.GetByIdAsync(id));
+        }
+
+        public async Task CreateOrUpdateAsync(RuleInfo rule)
+        {
+            await ruleRepository.CreateOrUpdateAsync(mapper.Map<Rule>(rule));
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            await ruleRepository.DeleteByIdAsync(id);
         }
 
         public bool Validate(User user, Resource resource)
