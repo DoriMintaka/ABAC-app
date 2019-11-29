@@ -17,21 +17,21 @@ namespace ABAC.DAL.Entities
         public ICollection<Attribute> Attributes { get; set; } = new List<Attribute>();
 
         [NotMapped]
-        public string this[string index]
+        public string this[string key]
         {
             get
             {
-                return Attributes.SingleOrDefault(a => a.Name == index)?.Value;
+                return Attributes.SingleOrDefault(a => a.Name == key.ToLowerInvariant())?.Value;
             }
             set
             {
-                var temp = Attributes.SingleOrDefault(a => a.Name == index);
+                var temp = Attributes.SingleOrDefault(a => a.Name == key.ToLowerInvariant());
                 if (temp != null)
                 {
                     Attributes.Remove(temp);
                 }
 
-                Attributes.Add(new Attribute { Name = index, Value = value });
+                Attributes.Add(new Attribute { Name = key.ToLowerInvariant(), Value = value.ToLowerInvariant() });
             }
         }
     }
