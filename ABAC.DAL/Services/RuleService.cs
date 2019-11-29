@@ -127,17 +127,17 @@ namespace ABAC.DAL.Services
 
         private string GetOperand(string operand)
         {
-            if (operand.StartsWith("User."))
+            if (operand.StartsWith("User.", StringComparison.InvariantCultureIgnoreCase))
             {
                 return $"u[\"{operand.Substring(5)}\"]";
             }
 
-            if (operand.StartsWith("Resource."))
+            if (operand.StartsWith("Resource.", StringComparison.InvariantCultureIgnoreCase))
             {
                 return $"r[\"{operand.Substring(9)}\"]";
             }
 
-            return $"\"{operand}\"";
+            return $"\"{operand.ToLowerInvariant()}\"";
         }
     }
 }
