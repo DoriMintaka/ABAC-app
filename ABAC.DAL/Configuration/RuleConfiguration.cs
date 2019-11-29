@@ -8,7 +8,7 @@ namespace ABAC.DAL.Configuration
     {
         public void Configure(EntityTypeBuilder<Rule> builder)
         {
-            builder.ToTable("resource").HasKey(item => item.Id);
+            builder.ToTable("rule").HasKey(item => item.Id);
             builder.Property(user => user.Value).HasColumnName("value");
         }
     }
