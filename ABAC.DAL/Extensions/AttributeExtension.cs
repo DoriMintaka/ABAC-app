@@ -1,9 +1,7 @@
 ﻿using ABAC.DAL.Entities;
 using ABAC.DAL.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using Attribute = ABAC.DAL.Entities.Attribute;
 
 namespace ABAC.DAL.Extensions
 {
@@ -11,7 +9,7 @@ namespace ABAC.DAL.Extensions
     {
         public static User SetDefaultAttributes(this User user)
         {
-            user.Attributes = DefaultUserAttributes;
+            user["Role"] = "User";
 
             return user;
         }
@@ -33,7 +31,7 @@ namespace ABAC.DAL.Extensions
 
         public static Resource SetDefaultAttributes(this Resource resource)
         {
-            resource.Attributes = DefaultResourceAttributes;
+            resource["CreatedAt"] = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
 
             return resource;
         }
@@ -45,11 +43,5 @@ namespace ABAC.DAL.Extensions
 
             return resource;
         }
-
-        private static ICollection<Attribute> DefaultUserAttributes
-            => new List<Attribute> { new Attribute{ Name = "User.Role", Value = "User"}};
-
-        private static ICollection<Attribute> DefaultResourceAttributes
-            => new List<Attribute> { new Attribute { Name = "Resource.CreatedAt", Value = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)}};
     }
 }

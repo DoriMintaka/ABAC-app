@@ -19,7 +19,7 @@ namespace ABAC.WebApp.Controllers
         }
 
         [HttpPost("signup")]
-        public async Task SignUp([FromForm] UserCredentials credentials, [FromForm] UserInfo info)
+        public async Task<IActionResult> SignUp([FromForm] UserCredentials credentials, [FromForm] UserInfo info)
         {
             try
             {
@@ -28,14 +28,14 @@ namespace ABAC.WebApp.Controllers
             catch (NotFoundException)
             {
                 await service.CreateAsync(info, credentials);
-                return;
+                return new OkResult();
             }
 
             throw new AlreadyExistsException();
         }
 
         [HttpPost("login")]
-        public async Task LogIn([FromForm] UserCredentials credentials)
+        public async Task<IActionResult> LogIn([FromForm] UserCredentials credentials)
         {
             var expected = await service.GetCredentialsAsync(credentials.Login);
             if (expected.Password != credentials.Password)
@@ -51,12 +51,15 @@ namespace ABAC.WebApp.Controllers
             {
                 HttpContext.Session.SetString(attribute.Name, attribute.Value);
             }
+
+            return new OkResult();
         }
 
         [HttpGet("logout")]
-        public void LogOut()
+        public IActionResult LogOut()
         {
             HttpContext.Session.Clear();
+            return new OkResult();
         }
     }
 }

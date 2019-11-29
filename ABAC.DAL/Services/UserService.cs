@@ -45,7 +45,7 @@ namespace ABAC.DAL.Services
             {
                 throw new NotFoundException();
             }
-            
+
             return mapper.Map<UserInfo>(user);
         }
 
@@ -67,7 +67,7 @@ namespace ABAC.DAL.Services
             await repository.CreateOrUpdateAsync(entity);
         }
 
-        public async Task UpdateAsync(UserInfo model)
+        public async Task UpdateAsync(UserInfo model, int userId)
         {
             var user = await repository.GetByIdAsync(model.Id);
             if (user == null)
@@ -98,7 +98,7 @@ namespace ABAC.DAL.Services
                 throw new NotFoundException();
             }
 
-            return user.Attributes.Select(kvp => mapper.Map<Attribute>(kvp));
+            return user.Attributes;
         }
 
         public async Task AddAttributesAsync(int id, IEnumerable<Attribute> attributes)
@@ -116,7 +116,7 @@ namespace ABAC.DAL.Services
 
             foreach (var attribute in attributes)
             {
-				user.Attributes.Add(attribute);
+                user.Attributes.Add(attribute);
             }
 
             await repository.CreateOrUpdateAsync(user);
@@ -132,12 +132,12 @@ namespace ABAC.DAL.Services
 
             var attribute = user.Attributes.SingleOrDefault(a => a.Name == attributeName);
 
-			if (attribute == null)
-			{
-				throw new NotFoundException();
-			}
+            if (attribute == null)
+            {
+                throw new NotFoundException();
+            }
 
-			user.Attributes.Remove(attribute);
+            user.Attributes.Remove(attribute);
             await repository.CreateOrUpdateAsync(user);
         }
     }

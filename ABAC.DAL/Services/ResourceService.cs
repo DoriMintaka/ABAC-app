@@ -39,11 +39,15 @@ namespace ABAC.DAL.Services
             return mapper.Map<ResourceInfo>(resource);
         }
 
-        public async Task UpdateAsync(ResourceInfo model)
+        public async Task UpdateAsync(ResourceInfo model, int userId)
         {
-            var resource = await repository.GetByIdAsync(model.Id) ?? new Resource().SetDefaultAttributes();
+            var resource = await repository.GetByIdAsync(model.Id)
+                           ?? new Resource
+                           {
+                               ["CreatedBy"] = userId.ToString()
+                           }.SetDefaultAttributes();
 
-            resource.SetInfo(model);
+            resource = resource.SetInfo(model);
             await repository.CreateOrUpdateAsync(resource);
         }
 
@@ -66,7 +70,7 @@ namespace ABAC.DAL.Services
                 throw new NotFoundException();
             }
 
-            return resource.Attributes.Select(kvp => mapper.Map<Attribute>(kvp));
+            return resource.Attributes;
         }
 
         public async Task AddAttributesAsync(int id, IEnumerable<Attribute> attributes)
@@ -80,7 +84,7 @@ namespace ABAC.DAL.Services
             foreach (var attribute in attributes)
             {
                 resource.Attributes.Add(attribute);
-			}
+            }
 
             await repository.CreateOrUpdateAsync(resource);
         }
@@ -93,16 +97,16 @@ namespace ABAC.DAL.Services
                 throw new NotFoundException();
             }
 
-			var attribute = resource.Attributes.SingleOrDefault(a => a.Name == attributeName);
+            var attribute = resource.Attributes.SingleOrDefault(a => a.Name == attributeName);
 
-			if (attribute == null)
-			{
-				throw new NotFoundException();
-			}
+            if (attribute == null)
+            {
+                throw new NotFoundException();
+            }
 
-			resource.Attributes.Remove(attribute);
+            resource.Attributes.Remove(attribute);
 
-			await repository.CreateOrUpdateAsync(resource);
+            await repository.CreateOrUpdateAsync(resource);
         }
     }
 }

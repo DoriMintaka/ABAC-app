@@ -6,7 +6,7 @@ namespace ABAC.DAL.Exceptions
     {
         public InvalidCredentialsException() : base("Invalid credentials.")
         {
-            
+
         }
     }
 }

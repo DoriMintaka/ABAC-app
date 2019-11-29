@@ -1,70 +1,64 @@
-﻿using ABAC.DAL.Entities;
+﻿using ABAC.DAL.Context;
+using ABAC.DAL.Entities;
 using ABAC.DAL.Repositories.Contracts;
-using ABAC.DAL.Context;
-using System;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
 
 namespace ABAC.DAL.Repositories
 {
     public class UserRepository : IUserRepository
     {
-		private readonly AppDbContext _context;
+        private readonly AppDbContext context;
 
-		public UserRepository(AppDbContext context)
-		{
-			this._context = context;
-		}
-
-		public async Task<IEnumerable<User>> GetAsync()
+        public UserRepository(AppDbContext context)
         {
-			return await _context.Users.ToListAsync();
-		}
+            this.context = context;
+        }
+
+        public async Task<IEnumerable<User>> GetAsync()
+        {
+            return await context.Users.ToListAsync();
+        }
 
         public async Task<User> GetByIdAsync(int id)
         {
-			return await _context.Users.SingleOrDefaultAsync(i => i.Id == id);
-		}
+            return await context.Users.FindAsync(id);
+        }
 
-		public async Task<User> GetByLoginAsync(string login)
+        public async Task<User> GetByLoginAsync(string login)
         {
-			return await _context.Users.SingleOrDefaultAsync(i => i.Login == login);
-		}
+            return await context.Users.SingleOrDefaultAsync(i => i.Login == login);
+        }
 
-		public async Task CreateOrUpdateAsync(User entity)
+        public async Task CreateOrUpdateAsync(User entity)
         {
-			var item = await _context.Users.FindAsync(entity.Id);
+            var item = await context.Users.FindAsync(entity.Id);
 
-			if (item == null)
-			{
-				_context.Users.Add(entity);
-			}
-			else
-			{
-				item.Name = entity.Name;
-				item.Login = entity.Login;
-				item.Password = entity.Password;
-				item.Attributes = entity.Attributes;
+            if (item == null)
+            {
+                context.Users.Add(entity);
+            }
+            else
+            {
+                item.Name = entity.Name;
+                item.Login = entity.Login;
+                item.Password = entity.Password;
+                item.Attributes = entity.Attributes;
+            }
 
-				_context.Users.Update(item);
-			}
-
-			await _context.SaveChangesAsync();
-		}
+            await context.SaveChangesAsync();
+        }
 
         public async Task DeleteByIdAsync(int id)
         {
-			var item = await _context.Users.FindAsync(id);
+            var item = await context.Users.FindAsync(id);
 
-			if (item == null)
-			{
-				throw new ArgumentException();
-			}
-
-			_context.Users.Remove(item);
-			await _context.SaveChangesAsync();
-		}
+            if (item != null)
+            {
+                context.Users.Remove(item);
+                await context.SaveChangesAsync();
+            }
+        }
     }
 }
