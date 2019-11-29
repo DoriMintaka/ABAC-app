@@ -98,7 +98,7 @@ namespace ABAC.DAL.Services
                 throw new NotFoundException();
             }
 
-            return user.Attributes.Select(kvp => mapper.Map<Attribute>(kvp));
+            return user.Attributes;
         }
 
         public async Task AddAttributesAsync(int id, IEnumerable<Attribute> attributes)

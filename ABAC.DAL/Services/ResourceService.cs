@@ -70,7 +70,7 @@ namespace ABAC.DAL.Services
                 throw new NotFoundException();
             }
 
-            return resource.Attributes.Select(kvp => mapper.Map<Attribute>(kvp));
+            return resource.Attributes;
         }
 
         public async Task AddAttributesAsync(int id, IEnumerable<Attribute> attributes)
