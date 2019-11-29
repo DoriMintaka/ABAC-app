@@ -1,7 +1,6 @@
 ﻿using ABAC.DAL.Services.Contracts;
 using ABAC.DAL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ABAC.WebApp.Controllers
@@ -18,27 +17,31 @@ namespace ABAC.WebApp.Controllers
         }
 
         [HttpGet("")]
-        public async Task<IEnumerable<RuleInfo>> GetRulesAsync()
+        public async Task<IActionResult> GetRulesAsync()
         {
-            return await service.GetAsync();
+            var result = await service.GetAsync();
+            return new OkObjectResult(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<RuleInfo> GetRuleAsync([FromRoute] int id)
+        public async Task<IActionResult> GetRuleAsync([FromRoute] int id)
         {
-            return await service.GetAsync(id);
+            var result = await service.GetAsync(id);
+            return new OkObjectResult(result);
         }
 
         [HttpPost("")]
-        public async Task CreateOrUpdateRuleAsync([FromBody] RuleInfo rule)
+        public async Task<IActionResult> CreateOrUpdateRuleAsync([FromBody] RuleInfo rule)
         {
             await service.CreateOrUpdateAsync(rule);
+            return new OkResult();
         }
 
         [HttpDelete("{id}")]
-        public async Task DeleteRuleAsync([FromRoute] int id)
+        public async Task<IActionResult> DeleteRuleAsync([FromRoute] int id)
         {
             await service.DeleteAsync(id);
+            return new OkResult();
         }
     }
 }

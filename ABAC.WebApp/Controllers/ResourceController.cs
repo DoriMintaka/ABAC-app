@@ -1,7 +1,7 @@
 ﻿using ABAC.DAL.Services.Contracts;
 using ABAC.DAL.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ABAC.WebApp.Controllers
@@ -18,27 +18,32 @@ namespace ABAC.WebApp.Controllers
         }
 
         [HttpGet("")]
-        public async Task<IEnumerable<ResourceInfo>> GetResourcesAsync()
+        public async Task<IActionResult> GetResourcesAsync()
         {
-            return await service.GetAsync();
+            var result = await service.GetAsync();
+            return new OkObjectResult(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ResourceInfo> GetResourceAsync([FromRoute] int id)
+        public async Task<IActionResult> GetResourceAsync([FromRoute] int id)
         {
-            return await service.GetAsync(id);
+            var result = await service.GetAsync(id);
+            return new OkObjectResult(result);
         }
 
         [HttpPost("")]
-        public async Task CreateOrUpdateResourceAsync([FromBody] ResourceInfo resource)
+        public async Task<IActionResult> CreateOrUpdateResourceAsync([FromBody] ResourceInfo resource)
         {
-            await service.UpdateAsync(resource);
+            var id = ControllerContext.HttpContext.Session.GetInt32("id") ?? 0;
+            await service.UpdateAsync(resource, id);
+            return new OkResult();
         }
 
         [HttpDelete("{id}")]
-        public async Task DeleteResourceAsync([FromRoute] int id)
+        public async Task<IActionResult> DeleteResourceAsync([FromRoute] int id)
         {
             await service.DeleteAsync(id);
+            return new OkResult();
         }
     }
 }

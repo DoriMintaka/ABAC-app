@@ -10,7 +10,7 @@ namespace ABAC.DAL.Services.Contracts
 
         Task<T> GetAsync(int id);
 
-        Task UpdateAsync(T model);
+        Task UpdateAsync(T model, int id);
 
         Task DeleteAsync(int id);
 

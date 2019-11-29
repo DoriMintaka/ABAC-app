@@ -22,39 +22,45 @@ namespace ABAC.WebApp.Controllers
         }
 
         [HttpGet("user/{id}")]
-        public async Task<IEnumerable<Attribute>> GetUserAttributesAsync([FromRoute] int id)
+        public async Task<IActionResult> GetUserAttributesAsync([FromRoute] int id)
         {
-            return await userService.GetAttributesAsync(id);
+            var result = await userService.GetAttributesAsync(id);
+            return new OkObjectResult(result);
         }
 
         [HttpPost("user/{id}")]
-        public async Task UpdateUserAttributesAsync([FromRoute] int id, [FromBody] IEnumerable<Attribute> attributes)
+        public async Task<IActionResult> UpdateUserAttributesAsync([FromRoute] int id, [FromBody] IEnumerable<Attribute> attributes)
         {
             await userService.AddAttributesAsync(id, attributes);
+            return new OkResult();
         }
 
         [HttpDelete("user/{id}")]
-        public async Task DeleteUserAttributeAsync([FromRoute] int id, [FromBody] string attribute)
+        public async Task<IActionResult> DeleteUserAttributeAsync([FromRoute] int id, [FromBody] string attribute)
         {
             await userService.DeleteAttributeAsync(id, attribute);
+            return new OkResult();
         }
 
         [HttpGet("resource/{id}")]
-        public async Task<IEnumerable<Attribute>> GetResourceAttributesAsync([FromRoute] int id)
+        public async Task<IActionResult> GetResourceAttributesAsync([FromRoute] int id)
         {
-            return await resourceService.GetAttributesAsync(id);
+            var result = await resourceService.GetAttributesAsync(id);
+            return new OkObjectResult(result);
         }
 
         [HttpPost("resource/{id}")]
-        public async Task UpdateResourceAsync([FromRoute] int id, [FromBody] IEnumerable<Attribute> attributes)
+        public async Task<IActionResult> UpdateResourceAsync([FromRoute] int id, [FromBody] IEnumerable<Attribute> attributes)
         {
             await resourceService.AddAttributesAsync(id, attributes);
+            return new OkResult();
         }
 
         [HttpDelete("user/{id}")]
-        public async Task DeleteResourceAttributeAsync([FromRoute] int id, [FromBody] string attribute)
+        public async Task<IActionResult> DeleteResourceAttributeAsync([FromRoute] int id, [FromBody] string attribute)
         {
             await resourceService.DeleteAttributeAsync(id, attribute);
+            return new OkResult();
         }
     }
 }

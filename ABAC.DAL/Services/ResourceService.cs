@@ -39,11 +39,15 @@ namespace ABAC.DAL.Services
             return mapper.Map<ResourceInfo>(resource);
         }
 
-        public async Task UpdateAsync(ResourceInfo model)
+        public async Task UpdateAsync(ResourceInfo model, int userId)
         {
-            var resource = await repository.GetByIdAsync(model.Id) ?? new Resource().SetDefaultAttributes();
+            var resource = await repository.GetByIdAsync(model.Id)
+                           ?? new Resource
+                           {
+                               ["CreatedBy"] = userId.ToString()
+                           }.SetDefaultAttributes();
 
-            resource.SetInfo(model);
+            resource = resource.SetInfo(model);
             await repository.CreateOrUpdateAsync(resource);
         }
 

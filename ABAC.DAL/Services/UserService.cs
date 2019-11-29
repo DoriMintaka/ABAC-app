@@ -67,7 +67,7 @@ namespace ABAC.DAL.Services
             await repository.CreateOrUpdateAsync(entity);
         }
 
-        public async Task UpdateAsync(UserInfo model)
+        public async Task UpdateAsync(UserInfo model, int userId)
         {
             var user = await repository.GetByIdAsync(model.Id);
             if (user == null)

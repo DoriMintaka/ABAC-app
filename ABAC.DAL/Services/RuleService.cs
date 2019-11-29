@@ -71,19 +71,16 @@ namespace ABAC.DAL.Services
 
         private string ParseRuleNode(RuleNode node)
         {
-            if (node.Type == NodeType.Single)
+            switch (node.Type)
             {
-                return ParsePredicate(node.Value);
-            }
-
-            if (node.Type == NodeType.And)
-            {
-                return $"({string.Join(" && ", node.Children.Select(ParseRuleNode))})";
-            }
-
-            if (node.Type == NodeType.Or)
-            {
-                return $"({string.Join(" || ", node.Children.Select(ParseRuleNode))})";
+                case NodeType.Single:
+                    return ParsePredicate(node.Value);
+                case NodeType.And:
+                    return $"({string.Join(" && ", node.Children.Select(ParseRuleNode))})";
+                case NodeType.Or:
+                    return $"({string.Join(" || ", node.Children.Select(ParseRuleNode))})";
+                default:
+                    throw new ArgumentException("Invalid node type.");
             }
         }
 
