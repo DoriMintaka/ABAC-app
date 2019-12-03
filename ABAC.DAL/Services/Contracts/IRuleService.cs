@@ -15,7 +15,9 @@ namespace ABAC.DAL.Services.Contracts
 
         Task DeleteAsync(int id);
 
-        bool Validate(User user, Resource resource);
+        Task<bool> Validate(int userId, int resourceId);
+
+        Task<bool> Validate(User user, Resource resource);
 
         Task LoadRulesAsync();
     }

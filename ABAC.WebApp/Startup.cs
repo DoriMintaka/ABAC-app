@@ -1,6 +1,7 @@
 using ABAC.DAL.Context;
 using ABAC.DAL.Entities;
 using ABAC.DAL.Exceptions;
+using ABAC.WebApp.Middleware;
 using ABAC.DAL.Repositories;
 using ABAC.DAL.Repositories.Contracts;
 using ABAC.DAL.Services;
@@ -77,6 +78,7 @@ namespace ABAC.WebApp
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
             app.UseSession();
+            app.UseMiddleware<AuthorizationMiddleware>();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -105,14 +107,17 @@ namespace ABAC.WebApp
                             var exception = features.Error;
                             switch (exception)
                             {
-                                case NotFoundException e:
-                                    context.Response.StatusCode = 404;
+                                case AlreadyExistsException e:
+                                    context.Response.StatusCode = 400;
                                     break;
                                 case InvalidCredentialsException e:
                                     context.Response.StatusCode = 401;
                                     break;
-                                case AlreadyExistsException e:
-                                    context.Response.StatusCode = 400;
+                                case ForbiddenException e:
+                                    context.Response.StatusCode = 403;
+                                    break;
+                                case NotFoundException e:
+                                    context.Response.StatusCode = 404;
                                     break;
                                 default:
                                     context.Response.StatusCode = 500;

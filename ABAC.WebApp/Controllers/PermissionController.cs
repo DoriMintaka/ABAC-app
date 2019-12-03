@@ -56,7 +56,7 @@ namespace ABAC.WebApp.Controllers
             return new OkResult();
         }
 
-        [HttpDelete("user/{id}")]
+        [HttpDelete("resource/{id}")]
         public async Task<IActionResult> DeleteResourceAttributeAsync([FromRoute] int id, [FromBody] string attribute)
         {
             await resourceService.DeleteAttributeAsync(id, attribute);

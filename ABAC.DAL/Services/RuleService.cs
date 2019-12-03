@@ -1,4 +1,5 @@
 ﻿using ABAC.DAL.Entities;
+using ABAC.DAL.Exceptions;
 using ABAC.DAL.Repositories.Contracts;
 using ABAC.DAL.RuleParser;
 using ABAC.DAL.Services.Contracts;
@@ -18,12 +19,18 @@ namespace ABAC.DAL.Services
     {
         private IEnumerable<Func<User, Resource, bool>> rules;
         private readonly IEntityRepository<Rule> ruleRepository;
+        private readonly IEntityRepository<Resource> resourceRepository;
+        private readonly IUserRepository userRepository;
         private readonly IMapper mapper;
 
-        public RuleService(IEntityRepository<Rule> ruleRepository, IMapper mapper)
+        public RuleService(IEntityRepository<Rule> ruleRepository, 
+                           IEntityRepository<Resource> resourceRepository, 
+                           IUserRepository userRepository, 
+                           IMapper mapper)
         {
-            LoadRulesAsync().GetAwaiter().GetResult();
             this.ruleRepository = ruleRepository;
+            this.resourceRepository = resourceRepository;
+            this.userRepository = userRepository;
             this.mapper = mapper;
         }
 
@@ -47,8 +54,26 @@ namespace ABAC.DAL.Services
             await ruleRepository.DeleteByIdAsync(id);
         }
 
-        public bool Validate(User user, Resource resource)
+        public async Task<bool> Validate(int userId, int resourceId)
         {
+            var user = await userRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                throw new NotFoundException();
+            }
+
+            var resource = await resourceRepository.GetByIdAsync(resourceId);
+            if (resource == null)
+            {
+                throw new NotFoundException();
+            }
+
+            return await Validate(user, resource);
+        }
+
+        public async Task<bool> Validate(User user, Resource resource)
+        {
+            await LoadRulesAsync();
             return rules.Any(r => r(user, resource));
         }
 
