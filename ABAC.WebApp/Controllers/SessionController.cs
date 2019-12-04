@@ -1,4 +1,5 @@
-﻿using ABAC.DAL.Exceptions;
+﻿using ABAC.DAL.Entities;
+using ABAC.DAL.Exceptions;
 using ABAC.DAL.Services.Contracts;
 using ABAC.DAL.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -28,6 +29,9 @@ namespace ABAC.WebApp.Controllers
             catch (NotFoundException)
             {
                 await service.CreateAsync(info, credentials);
+                var user = await service.GetAsync(credentials.Login);
+                await service.AddAttributesAsync(user.Id, new[] {new Attribute {Name = "id", Value = user.Id.ToString()}});
+                
                 return new OkResult();
             }
 
@@ -43,15 +47,10 @@ namespace ABAC.WebApp.Controllers
                 throw new InvalidCredentialsException();
             }
 
-            HttpContext.Session.SetString("login", credentials.Login);
             var info = await service.GetAsync(credentials.Login);
-            HttpContext.Session.SetInt32("id", info.Id);
-            var attributes = await service.GetAttributesAsync(info.Id);
-            foreach (var attribute in attributes)
-            {
-                HttpContext.Session.SetString(attribute.Name, attribute.Value);
-            }
+            HttpContext.Session.SetInt32("userId", info.Id);
 
+            
             return new OkResult();
         }
 
@@ -59,6 +58,7 @@ namespace ABAC.WebApp.Controllers
         public IActionResult LogOut()
         {
             HttpContext.Session.Clear();
+
             return new OkResult();
         }
     }

@@ -79,8 +79,8 @@ namespace ABAC.DAL.Services
 
         public async Task LoadRulesAsync()
         {
-            var ruleStrings = await ruleRepository.GetAsync();
-            rules = ruleStrings.Select(r => r.Value).Select(JsonConvert.DeserializeObject<RuleNode>).Select(Build);
+            var ruleEntities = await ruleRepository.GetAsync();
+            rules = ruleEntities.Select(r => r.Value).Select(JsonConvert.DeserializeObject<RuleNode>).Select(Build);
         }
 
         private Func<User, Resource, bool> Build(RuleNode root)

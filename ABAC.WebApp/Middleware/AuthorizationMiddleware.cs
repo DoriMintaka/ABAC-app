@@ -12,7 +12,7 @@ namespace ABAC.WebApp.Middleware
         private readonly RequestDelegate next;
         private readonly IUserService userService;
 
-        public AuthorizationMiddleware(RequestDelegate next, IRuleService ruleService, IUserService userService)
+        public AuthorizationMiddleware(RequestDelegate next, IUserService userService)
         {
             this.next = next;
             this.userService = userService;
@@ -38,7 +38,7 @@ namespace ABAC.WebApp.Middleware
 
         private async Task<bool> IsAuthorized(HttpRequest request, int userId)
         {
-            if (request.Path.StartsWithSegments("/api/resources"))
+            if (request.Path.StartsWithSegments("/api/resources") || request.Path.StartsWithSegments("/api/auth"))
             {
                 return true;
             }

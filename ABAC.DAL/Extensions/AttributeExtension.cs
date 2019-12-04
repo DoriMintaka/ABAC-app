@@ -9,7 +9,7 @@ namespace ABAC.DAL.Extensions
     {
         public static User SetDefaultAttributes(this User user)
         {
-            user["Role"] = "User";
+            user["role"] = "user";
 
             return user;
         }
@@ -31,7 +31,7 @@ namespace ABAC.DAL.Extensions
 
         public static Resource SetDefaultAttributes(this Resource resource)
         {
-            resource["CreatedAt"] = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+            resource["createdat"] = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
 
             return resource;
         }

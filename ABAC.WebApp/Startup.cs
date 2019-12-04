@@ -44,7 +44,7 @@ namespace ABAC.WebApp
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddAutoMapper(Assembly.GetAssembly(typeof(MappingProfile)));
+            services.AddAutoMapper(typeof(MappingProfile));
             services.AddTransient<IEntityRepository<Resource>, ResourceRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IEntityRepository<Rule>, RuleRepository>();
@@ -74,11 +74,14 @@ namespace ABAC.WebApp
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
             app.UseSession();
-            app.UseMiddleware<AuthorizationMiddleware>();
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                app.UseMiddleware<AuthorizationMiddleware>(scope.ServiceProvider.GetService<IUserService>());
+            }
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

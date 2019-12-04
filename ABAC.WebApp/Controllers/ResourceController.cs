@@ -3,6 +3,7 @@ using ABAC.DAL.Services.Contracts;
 using ABAC.DAL.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ABAC.WebApp.Controllers
@@ -23,7 +24,7 @@ namespace ABAC.WebApp.Controllers
         [HttpGet("")]
         public async Task<IActionResult> GetResourcesAsync()
         {
-            var result = await service.GetAsync();
+            var result = (await service.GetAsync()).Select(r => new {Id = r.Id, Name = r.Name});
             return new OkObjectResult(result);
         }
 
@@ -42,7 +43,7 @@ namespace ABAC.WebApp.Controllers
         [HttpPost("")]
         public async Task<IActionResult> CreateOrUpdateResourceAsync([FromBody] ResourceInfo resource)
         {
-            var id = ControllerContext.HttpContext.Session.GetInt32("id") ?? 0;
+            var id = ControllerContext.HttpContext.Session.GetInt32("userId") ?? 0;
             await service.UpdateAsync(resource, id);
             return new OkResult();
         }
