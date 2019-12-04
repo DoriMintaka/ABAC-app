@@ -24,7 +24,7 @@ namespace ABAC.WebApp.Controllers
         [HttpGet("")]
         public async Task<IActionResult> GetResourcesAsync()
         {
-            var result = (await service.GetAsync()).Select(r => new {Id = r.Id, Name = r.Name});
+            var result = (await service.GetAsync()).Select(r => new { Id = r.Id, Name = r.Name });
             return new OkObjectResult(result);
         }
 

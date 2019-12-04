@@ -23,9 +23,9 @@ namespace ABAC.WebApp.Middleware
             if (!context.Session.IsAvailable && !context.Request.Path.StartsWithSegments("/api/auth"))
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                
+
             }
-            else if(!await IsAuthorized(context.Request, context.Session.GetInt32("userId").GetValueOrDefault(-1)))
+            else if (!await IsAuthorized(context.Request, context.Session.GetInt32("userId").GetValueOrDefault(-1)))
             {
                 context.Response.StatusCode = StatusCodes.Status403Forbidden;
                 await context.Response.WriteAsync("Not enough permissions!");

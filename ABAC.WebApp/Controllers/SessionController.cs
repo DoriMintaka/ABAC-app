@@ -30,8 +30,8 @@ namespace ABAC.WebApp.Controllers
             {
                 await service.CreateAsync(info, credentials);
                 var user = await service.GetAsync(credentials.Login);
-                await service.AddAttributesAsync(user.Id, new[] {new Attribute {Name = "id", Value = user.Id.ToString()}});
-                
+                await service.AddAttributesAsync(user.Id, new[] { new Attribute { Name = "id", Value = user.Id.ToString() } });
+
                 return new OkResult();
             }
 
@@ -50,7 +50,7 @@ namespace ABAC.WebApp.Controllers
             var info = await service.GetAsync(credentials.Login);
             HttpContext.Session.SetInt32("userId", info.Id);
 
-            
+
             return new OkResult();
         }
 

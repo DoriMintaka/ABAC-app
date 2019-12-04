@@ -23,9 +23,9 @@ namespace ABAC.DAL.Services
         private readonly IUserRepository userRepository;
         private readonly IMapper mapper;
 
-        public RuleService(IEntityRepository<Rule> ruleRepository, 
-                           IEntityRepository<Resource> resourceRepository, 
-                           IUserRepository userRepository, 
+        public RuleService(IEntityRepository<Rule> ruleRepository,
+                           IEntityRepository<Resource> resourceRepository,
+                           IUserRepository userRepository,
                            IMapper mapper)
         {
             this.ruleRepository = ruleRepository;

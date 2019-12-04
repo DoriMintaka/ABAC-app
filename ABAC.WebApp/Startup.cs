@@ -1,13 +1,13 @@
 using ABAC.DAL.Context;
 using ABAC.DAL.Entities;
 using ABAC.DAL.Exceptions;
-using ABAC.WebApp.Middleware;
 using ABAC.DAL.Repositories;
 using ABAC.DAL.Repositories.Contracts;
 using ABAC.DAL.Services;
 using ABAC.DAL.Services.Contracts;
 using ABAC.DAL.ViewModels;
 using ABAC.WebApp.Configuration;
+using ABAC.WebApp.Middleware;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -18,7 +18,6 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
 namespace ABAC.WebApp
 {
@@ -81,7 +80,7 @@ namespace ABAC.WebApp
             {
                 app.UseMiddleware<AuthorizationMiddleware>(scope.ServiceProvider.GetService<IUserService>());
             }
-            
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
