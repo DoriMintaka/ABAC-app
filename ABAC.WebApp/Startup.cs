@@ -62,48 +62,9 @@ namespace ABAC.WebApp
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
-            app.UseStaticFiles();
-            app.UseSpaStaticFiles();
-            app.UseSession();
-            using (var scope = app.ApplicationServices.CreateScope())
-            {
-                app.UseMiddleware<AuthorizationMiddleware>(scope.ServiceProvider.GetService<IUserService>());
-            }
-
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
-            });
-
-            app.UseSpa(spa =>
-            {
-                // To learn more about options for serving an Angular SPA from ASP.NET Core,
-                // see https://go.microsoft.com/fwlink/?linkid=864501
-
-                spa.Options.SourcePath = "ClientApp";
-
-                if (env.IsDevelopment())
+            app.UseExceptionHandler(errApp =>
                 {
-                    spa.UseAngularCliServer(npmScript: "start");
-                }
-                else
-                {
-                    app.UseExceptionHandler(errApp =>
-                    {
-                        errApp.Run(async context =>
+                    errApp.Run(async context =>
                         {
                             var features = context.Features.Get<IExceptionHandlerPathFeature>();
                             var exception = features.Error;
@@ -128,8 +89,8 @@ namespace ABAC.WebApp
 
                             context.Response.ContentType = "application/json";
                             var errorMessage = context.Response.StatusCode == 500
-                                           ? "Internal server error"
-                                           : exception.Message;
+                                                   ? "Internal server error"
+                                                   : exception.Message;
 
                             var responseText = $@"{{
                                                 ""errorCode"": {context.Response.StatusCode},
@@ -138,7 +99,36 @@ namespace ABAC.WebApp
 
                             await context.Response.WriteAsync(responseText);
                         });
-                    });
+                });
+
+            app.UseStaticFiles();
+            app.UseSpaStaticFiles();
+            app.UseSession();
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                app.UseMiddleware<AuthorizationMiddleware>(scope.ServiceProvider.GetService<IUserService>());
+            }
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller}/{action=Index}/{id?}");
+            });
+
+            
+
+            app.UseSpa(spa =>
+            {
+                // To learn more about options for serving an Angular SPA from ASP.NET Core,
+                // see https://go.microsoft.com/fwlink/?linkid=864501
+
+                spa.Options.SourcePath = "ClientApp";
+
+               
+                if (env.IsDevelopment())
+                {
+                    spa.UseAngularCliServer(npmScript: "start");
                 }
             });
         }

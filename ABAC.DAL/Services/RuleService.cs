@@ -59,7 +59,7 @@ namespace ABAC.DAL.Services
             var user = await userRepository.GetByIdAsync(userId);
             if (user == null)
             {
-                throw new NotFoundException();
+                throw new ForbiddenException();
             }
 
             var resource = await resourceRepository.GetByIdAsync(resourceId);
