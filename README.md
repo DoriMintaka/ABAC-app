@@ -7,7 +7,7 @@ This is a web application using ABAC system.
 - [x] Define API for entity management
 - [x] Implement 'rule engine'
 - [x] Define API for rule management
-- [ ] Implement authentication and authorization
+- [x] Implement authentication and authorization
 ### Data
 - [x] Define schema for entities
 - [x] Define schema for rules (?)
