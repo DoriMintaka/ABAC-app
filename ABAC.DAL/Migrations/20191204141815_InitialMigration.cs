@@ -22,12 +22,25 @@ namespace ABAC.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "rule",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    value = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_rule", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "user",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    login = table.Column<string>(nullable: true),
+                    login = table.Column<string>(type: "nvarchar(50)", nullable: true),
                     password = table.Column<string>(nullable: true),
                     name = table.Column<string>(nullable: true)
                 },
@@ -40,14 +53,16 @@ namespace ABAC.DAL.Migrations
                 name: "Attribute",
                 columns: table => new
                 {
-                    Name = table.Column<string>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: true),
                     Value = table.Column<string>(nullable: true),
                     ResourceId = table.Column<int>(nullable: true),
                     UserId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Attribute", x => x.Name);
+                    table.PrimaryKey("PK_Attribute", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Attribute_resource_ResourceId",
                         column: x => x.ResourceId,
@@ -61,6 +76,26 @@ namespace ABAC.DAL.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.InsertData(
+                table: "rule",
+                columns: new[] { "Id", "value" },
+                values: new object[] { 1, "{\"type\": \"single\",\"value\": {\"left\": \"user.id\",\"right\": \"resource.createdby\",\"operation\": \"stringequal\"}}" });
+
+            migrationBuilder.InsertData(
+                table: "user",
+                columns: new[] { "Id", "login", "name", "password" },
+                values: new object[] { 1, "admin", "admin", "password" });
+
+            migrationBuilder.InsertData(
+                table: "Attribute",
+                columns: new[] { "Id", "Name", "ResourceId", "UserId", "Value" },
+                values: new object[] { 1, "role", null, 1, "admin" });
+
+            migrationBuilder.InsertData(
+                table: "Attribute",
+                columns: new[] { "Id", "Name", "ResourceId", "UserId", "Value" },
+                values: new object[] { 2, "id", null, 1, "1" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Attribute_ResourceId",
@@ -77,6 +112,9 @@ namespace ABAC.DAL.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Attribute");
+
+            migrationBuilder.DropTable(
+                name: "rule");
 
             migrationBuilder.DropTable(
                 name: "resource");

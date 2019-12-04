@@ -9,7 +9,7 @@ namespace ABAC.DAL.Configuration
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.ToTable("user").HasKey(item => item.Id);
-            builder.Property(user => user.Login).HasColumnName("login");
+            builder.Property(user => user.Login).HasColumnType("nvarchar(50)").HasColumnName("login");
             builder.Property(user => user.Password).HasColumnName("password");
             builder.Property(user => user.Name).HasColumnName("name");
             builder.HasMany(user => user.Attributes);

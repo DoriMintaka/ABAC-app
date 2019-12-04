@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ABAC.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20191125202215_InitialMigration")]
+    [Migration("20191204141815_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,8 +23,11 @@ namespace ABAC.DAL.Migrations
 
             modelBuilder.Entity("ABAC.DAL.Entities.Attribute", b =>
                 {
-                    b.Property<string>("Name")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name");
 
                     b.Property<int?>("ResourceId");
 
@@ -32,13 +35,29 @@ namespace ABAC.DAL.Migrations
 
                     b.Property<string>("Value");
 
-                    b.HasKey("Name");
+                    b.HasKey("Id");
 
                     b.HasIndex("ResourceId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("Attribute");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "role",
+                            UserId = 1,
+                            Value = "admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "id",
+                            UserId = 1,
+                            Value = "1"
+                        });
                 });
 
             modelBuilder.Entity("ABAC.DAL.Entities.Resource", b =>
@@ -58,6 +77,27 @@ namespace ABAC.DAL.Migrations
                     b.ToTable("resource");
                 });
 
+            modelBuilder.Entity("ABAC.DAL.Entities.Rule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Value")
+                        .HasColumnName("value");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("rule");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Value = "{\"type\": \"single\",\"value\": {\"left\": \"user.id\",\"right\": \"resource.createdby\",\"operation\": \"stringequal\"}}"
+                        });
+                });
+
             modelBuilder.Entity("ABAC.DAL.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -65,7 +105,8 @@ namespace ABAC.DAL.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Login")
-                        .HasColumnName("login");
+                        .HasColumnName("login")
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Name")
                         .HasColumnName("name");
@@ -76,6 +117,15 @@ namespace ABAC.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("user");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Login = "admin",
+                            Name = "admin",
+                            Password = "password"
+                        });
                 });
 
             modelBuilder.Entity("ABAC.DAL.Entities.Attribute", b =>
