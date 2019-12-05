@@ -1,12 +1,12 @@
 using ABAC.DAL.Context;
 using ABAC.DAL.Entities;
 using ABAC.DAL.Exceptions;
+using ABAC.DAL.Mapping;
 using ABAC.DAL.Repositories;
 using ABAC.DAL.Repositories.Contracts;
 using ABAC.DAL.Services;
 using ABAC.DAL.Services.Contracts;
 using ABAC.DAL.ViewModels;
-using ABAC.WebApp.Configuration;
 using ABAC.WebApp.Middleware;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
@@ -63,51 +63,53 @@ namespace ABAC.WebApp
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseExceptionHandler(errApp =>
+            {
+                errApp.Run(async context =>
                 {
-                    errApp.Run(async context =>
-                        {
-                            var features = context.Features.Get<IExceptionHandlerPathFeature>();
-                            var exception = features.Error;
-                            switch (exception)
-                            {
-                                case AlreadyExistsException e:
-                                    context.Response.StatusCode = 400;
-                                    break;
-                                case InvalidCredentialsException e:
-                                    context.Response.StatusCode = 401;
-                                    break;
-                                case ForbiddenException e:
-                                    context.Response.StatusCode = 403;
-                                    break;
-                                case NotFoundException e:
-                                    context.Response.StatusCode = 404;
-                                    break;
-                                default:
-                                    context.Response.StatusCode = 500;
-                                    break;
-                            }
+                    var features = context.Features.Get<IExceptionHandlerPathFeature>();
+                    var exception = features.Error;
+                    switch (exception)
+                    {
+                        case AlreadyExistsException e:
+                            context.Response.StatusCode = 400;
 
-                            context.Response.ContentType = "application/json";
-                            var errorMessage = context.Response.StatusCode == 500
-                                                   ? "Internal server error"
-                                                   : exception.Message;
+                            break;
+                        case InvalidCredentialsException e:
+                            context.Response.StatusCode = 401;
 
-                            var responseText = $@"{{
+                            break;
+                        case ForbiddenException e:
+                            context.Response.StatusCode = 403;
+
+                            break;
+                        case NotFoundException e:
+                            context.Response.StatusCode = 404;
+
+                            break;
+                        default:
+                            context.Response.StatusCode = 500;
+
+                            break;
+                    }
+
+                    context.Response.ContentType = "application/json";
+                    var errorMessage = context.Response.StatusCode == 500
+                                           ? "Internal server error"
+                                           : exception.Message;
+
+                    var responseText = $@"{{
                                                 ""errorCode"": {context.Response.StatusCode},
                                                 ""errorMessage"": ""{errorMessage}""
                                             }}";
 
-                            await context.Response.WriteAsync(responseText);
-                        });
+                    await context.Response.WriteAsync(responseText);
                 });
+            });
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
             app.UseSession();
-            using (var scope = app.ApplicationServices.CreateScope())
-            {
-                app.UseMiddleware<AuthorizationMiddleware>(scope.ServiceProvider.GetService<IUserService>());
-            }
+            app.UseMiddleware<AuthorizationMiddleware>();
 
             app.UseMvc(routes =>
             {
@@ -116,7 +118,7 @@ namespace ABAC.WebApp
                     template: "{controller}/{action=Index}/{id?}");
             });
 
-            
+
 
             app.UseSpa(spa =>
             {
@@ -125,7 +127,7 @@ namespace ABAC.WebApp
 
                 spa.Options.SourcePath = "ClientApp";
 
-               
+
                 if (env.IsDevelopment())
                 {
                     spa.UseAngularCliServer(npmScript: "start");

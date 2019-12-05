@@ -10,16 +10,17 @@ namespace ABAC.WebApp.Middleware
     public class AuthorizationMiddleware
     {
         private readonly RequestDelegate next;
-        private readonly IUserService userService;
+        private IUserService userService;
 
-        public AuthorizationMiddleware(RequestDelegate next, IUserService userService)
+        public AuthorizationMiddleware(RequestDelegate next)
         {
             this.next = next;
-            this.userService = userService;
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context, IUserService service)
         {
+            this.userService = service;
+
             if (!context.Session.IsAvailable && !context.Request.Path.StartsWithSegments("/api/auth"))
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
@@ -38,27 +39,27 @@ namespace ABAC.WebApp.Middleware
 
         private async Task<bool> IsAuthorized(HttpRequest request, int userId)
         {
-            if (request.Path.StartsWithSegments("/api/resources") || request.Path.StartsWithSegments("/api/auth"))
+            if (request.Path.StartsWithSegments("/api/auth"))
             {
                 return true;
             }
 
-            Func<User, Resource, bool> predicate;
-
-            if (request.Path.StartsWithSegments("/api/resources") || request.Path.StartsWithSegments("/api/rules"))
+            if (request.Path.StartsWithSegments("/api/resources"))
             {
-                predicate = (u, r) => u["role"] == "admin";
+                return userId > 0;
             }
-            else
+
+            if (!request.Path.StartsWithSegments("/api/rules") && !request.Path.StartsWithSegments("/api/management"))
             {
-                predicate = (u, r) => false;
+                return false;
             }
 
             try
             {
-                var attributes = await userService.GetAttributesAsync(userId);
-                var user = new User { Id = userId, Attributes = attributes.ToList() };
-                return predicate(user, null);
+                var userAttributes = (await userService.GetAttributesAsync(userId)).ToList();
+                var user = new User { Attributes = userAttributes };
+
+                return user["role"] == "admin";
             }
             catch (Exception)
             {
