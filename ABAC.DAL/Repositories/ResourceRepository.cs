@@ -3,6 +3,7 @@ using ABAC.DAL.Entities;
 using ABAC.DAL.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ABAC.DAL.Repositories
@@ -23,7 +24,7 @@ namespace ABAC.DAL.Repositories
 
         public async Task<Resource> GetByIdAsync(int id)
         {
-            return await context.Resources.FindAsync(id);
+            return await context.Resources.Where(r => r.Id == id).Include(r => r.Attributes).SingleOrDefaultAsync();
         }
 
         public async Task CreateOrUpdateAsync(Resource entity)

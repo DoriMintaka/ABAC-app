@@ -3,6 +3,7 @@ using ABAC.DAL.Entities;
 using ABAC.DAL.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ABAC.DAL.Repositories
@@ -23,12 +24,12 @@ namespace ABAC.DAL.Repositories
 
         public async Task<User> GetByIdAsync(int id)
         {
-            return await context.Users.FindAsync(id);
+            return await context.Users.Where(u => u.Id == id).Include(u => u.Attributes).SingleOrDefaultAsync();
         }
 
         public async Task<User> GetByLoginAsync(string login)
         {
-            return await context.Users.SingleOrDefaultAsync(i => i.Login == login);
+            return await context.Users.Where(u => u.Login == login).Include(u => u.Attributes).SingleOrDefaultAsync();
         }
 
         public async Task CreateOrUpdateAsync(User entity)

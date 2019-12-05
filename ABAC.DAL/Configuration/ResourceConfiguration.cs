@@ -11,7 +11,7 @@ namespace ABAC.DAL.Configuration
             builder.ToTable("resource").HasKey(item => item.Id);
             builder.Property(user => user.Name).HasColumnName("name");
             builder.Property(user => user.Value).HasColumnName("value");
-            builder.HasMany(user => user.Attributes);
+            builder.HasMany(user => user.Attributes).WithOne().OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

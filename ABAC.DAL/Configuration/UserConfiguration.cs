@@ -12,7 +12,7 @@ namespace ABAC.DAL.Configuration
             builder.Property(user => user.Login).HasColumnType("nvarchar(50)").HasColumnName("login");
             builder.Property(user => user.Password).HasColumnName("password");
             builder.Property(user => user.Name).HasColumnName("name");
-            builder.HasMany(user => user.Attributes);
+            builder.HasMany(user => user.Attributes).WithOne().OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
