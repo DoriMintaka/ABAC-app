@@ -116,7 +116,7 @@ namespace ABAC.DAL.Services
 
             foreach (var attribute in attributes)
             {
-                user.Attributes.Add(attribute);
+                user[attribute.Name] = attribute.Value;
             }
 
             await repository.CreateOrUpdateAsync(user);

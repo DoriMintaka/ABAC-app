@@ -83,7 +83,7 @@ namespace ABAC.DAL.Services
 
             foreach (var attribute in attributes)
             {
-                resource.Attributes.Add(attribute);
+                resource[attribute.Name] = resource[attribute.Value];
             }
 
             await repository.CreateOrUpdateAsync(resource);
