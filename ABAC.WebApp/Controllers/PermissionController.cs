@@ -29,9 +29,9 @@ namespace ABAC.WebApp.Controllers
         }
 
         [HttpPost("user/{id}")]
-        public async Task<IActionResult> UpdateUserAttributesAsync([FromRoute] int id, [FromBody] IEnumerable<Attribute> attributes)
+        public async Task<IActionResult> UpdateUserAttributesAsync([FromRoute] int id, [FromBody] Attribute attributes)
         {
-            await userService.AddAttributesAsync(id, attributes);
+            await userService.AddAttributesAsync(id, new []{attributes});
             return new OkResult();
         }
 
@@ -50,9 +50,9 @@ namespace ABAC.WebApp.Controllers
         }
 
         [HttpPost("resource/{id}")]
-        public async Task<IActionResult> UpdateResourceAsync([FromRoute] int id, [FromBody] IEnumerable<Attribute> attributes)
+        public async Task<IActionResult> UpdateResourceAsync([FromRoute] int id, [FromBody] Attribute attributes)
         {
-            await resourceService.AddAttributesAsync(id, attributes);
+            await resourceService.AddAttributesAsync(id, new []{attributes});
             return new OkResult();
         }
 
