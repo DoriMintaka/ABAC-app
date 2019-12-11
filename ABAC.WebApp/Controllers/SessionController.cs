@@ -50,8 +50,7 @@ namespace ABAC.WebApp.Controllers
             var info = await service.GetAsync(credentials.Login);
             HttpContext.Session.SetInt32("userId", info.Id);
 
-
-            return new OkResult();
+            return new OkObjectResult(info.Name);
         }
 
         [HttpGet("logout")]
