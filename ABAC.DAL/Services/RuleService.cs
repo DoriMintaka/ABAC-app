@@ -120,8 +120,8 @@ namespace ABAC.DAL.Services
             }
             else
             {
-                left = $"double.Parse(\"{GetOperand(predicate.Left)}\")";
-                right = $"double.Parse(\"{GetOperand(predicate.Right)}\")";
+                left = $"double.Parse({GetOperand(predicate.Left)})";
+                right = $"double.Parse({GetOperand(predicate.Right)})";
             }
 
             return $"{left} {@operator} {right}";
